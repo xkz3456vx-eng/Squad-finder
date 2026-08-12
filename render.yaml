@@ -1,0 +1,23 @@
+# Render blueprint: New > Blueprint on render.com, point it at this repository.
+# Railway and Fly.io do not need this file — they read the Dockerfile directly.
+services:
+  - type: web
+    name: squad-finder
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_FILE
+        value: /data/app.db
+    # SQLite lives on this volume. Without it the database is part of the
+    # container filesystem and every redeploy starts from an empty base.
+    # Render disks require a paid instance type: on the free plan, delete this
+    # block and accept that the data resets.
+    disk:
+      name: squad-finder-data
+      mountPath: /data
+      sizeGB: 1
+    # The SSE chat fans out through an in-process bus, and the database is a
+    # local file: both assume exactly one running instance.
+    numInstances: 1

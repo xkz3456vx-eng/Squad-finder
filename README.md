@@ -52,6 +52,39 @@ npm run build && npm run start &
 SMOKE_BASE=http://127.0.0.1:3000 npm run test:smoke
 ```
 
+## Mise en ligne
+
+L'application a besoin d'un **processus Node vivant** : rendu serveur, routes
+API, écritures SQLite et connexion SSE longue durée. GitHub Pages et tout autre
+hébergement statique sont donc exclus — l'export statique de Next.js l'est aussi
+(les routes lisent les cookies et sont `force-dynamic`).
+
+Il lui faut également **un disque persistant** et **une seule instance** : la
+base est un fichier SQLite et le bus SSE est in-process.
+
+Le `Dockerfile` fourni est autonome (build `output: "standalone"`, utilisateur
+non-root, volume `/data`) et fonctionne tel quel sur Railway, Fly.io, Koyeb ou
+un VPS :
+
+```bash
+docker build -t squad-finder .
+docker run -p 3000:3000 -v squad-data:/data squad-finder
+```
+
+Sur Render, `render.yaml` est un blueprint prêt à l'emploi : *New > Blueprint*,
+puis pointer sur ce dépôt.
+
+Deux points à vérifier sur l'hébergeur retenu :
+
+- **HTTPS obligatoire** — le cookie de session est marqué `secure` en
+  production, il ne circulera pas en HTTP simple.
+- `DATABASE_FILE` doit pointer vers le volume monté (`/data/app.db` par défaut
+  dans l'image).
+
+Vercel demanderait deux migrations préalables : SQLite → Postgres, et le bus
+in-process → Redis pub/sub. Les limites de durée des fonctions serverless
+coupent par ailleurs les connexions SSE longues.
+
 ## Authentification anonyme
 
 - Aucun e-mail, aucun mot de passe.
