@@ -1,0 +1,226 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Squad Finder — design system
+   Dark-first, high contrast. Single committed theme (pas de light mode).
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces --------------------------------------------------------------- */
+  --bg: #0a0a0f;
+  --surface: #12121b;
+  --surface-2: #1a1a26;
+  --border: #2a2a3a;
+
+  /* Texte ------------------------------------------------------------------ */
+  --text: #f2f3f7;
+  --muted: #9a9ab0;
+
+  /* Accent (violet/indigo "gaming") --------------------------------------- */
+  --accent: #7c5cff;
+  --accent-soft: rgba(124, 92, 255, 0.14);
+  --accent-contrast: #0b0714;
+
+  /* États ------------------------------------------------------------------ */
+  --success: #3ddc97;
+  --success-soft: rgba(61, 220, 151, 0.13);
+  --warn: #ffc861;
+  --warn-soft: rgba(255, 200, 97, 0.13);
+  --danger: #ff6b81;
+  --danger-soft: rgba(255, 107, 129, 0.13);
+
+  /* Divers ----------------------------------------------------------------- */
+  --ring: rgba(124, 92, 255, 0.55);
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-contrast: var(--accent-contrast);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+}
+
+/* Halo d'accent fixe en haut de page — purement décoratif, très basse opacité
+   afin de ne jamais nuire au contraste du texte. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20vh 0 auto 0;
+  height: 70vh;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(
+      60% 55% at 50% 0%,
+      rgba(124, 92, 255, 0.16) 0%,
+      rgba(124, 92, 255, 0.06) 45%,
+      transparent 72%
+    ),
+    radial-gradient(
+      40% 40% at 85% 8%,
+      rgba(61, 220, 151, 0.06) 0%,
+      transparent 70%
+    );
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: rgba(124, 92, 255, 0.35);
+  color: var(--text);
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbar
+   -------------------------------------------------------------------------- */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a4e transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #33334a;
+  border: 2px solid var(--bg);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #46466a;
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg);
+}
+
+/* --------------------------------------------------------------------------
+   Focus
+   -------------------------------------------------------------------------- */
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+/* Filet de sécurité : jamais de focus invisible. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Animations
+   -------------------------------------------------------------------------- */
+
+@keyframes sf-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sf-pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes sf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-fade-in {
+  animation: sf-fade-in 180ms ease-out both;
+}
+
+.animate-pulse-soft {
+  animation: sf-pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin-slow {
+  animation: sf-spin 800ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-pulse-soft,
+  .animate-spin-slow {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
